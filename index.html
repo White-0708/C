@@ -1,0 +1,3021 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Digital IB - Recursos para Estudiantes del Bachillerato Internacional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos personalizados */
+        .course-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .resource-card {
+            transition: transform 0.2s ease;
+        }
+        .resource-card:hover {
+            transform: scale(1.02);
+        }
+        .favorite-btn {
+            transition: color 0.2s ease;
+        }
+        .favorite-btn.active {
+            color: #ef4444;
+        }
+        /* Animación para el contenido que se carga */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        /* Estilos para el botón flotante */
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #dc2626;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            z-index: 40;
+            transition: all 0.3s ease;
+        }
+        .fab:hover {
+            background-color: #b91c1c;
+            transform: scale(1.1);
+        }
+        /* Estilos para el formulario flotante */
+        .form-container {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 350px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 30;
+            padding: 20px;
+            display: none;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .form-container.active {
+            display: block;
+        }
+        /* Estilos para las notificaciones */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: #dc2626;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            display: none;
+            animation: slideIn 0.3s ease, slideOut 0.3s ease 2.7s;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); }
+            to { transform: translateX(100%); }
+        }
+        /* Estilos para los enlaces externos */
+        .external-link {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .external-link:hover {
+            color: #dc2626;
+        }
+        /* Estilos para los badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 0.25rem;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .badge-red {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        .badge-gray {
+            background-color: #f3f4f6;
+            color: #4b5563;
+        }
+        .badge-blue {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+        .badge-green {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .badge-yellow {
+            background-color: #fef9c3;
+            color: #854d0e;
+        }
+        .badge-purple {
+            background-color: #f3e8ff;
+            color: #6b21a8;
+        }
+        .badge-indigo {
+            background-color: #e0e7ff;
+            color: #3730a3;
+        }
+        .badge-pink {
+            background-color: #fce7f3;
+            color: #9f1239;
+        }
+        .badge-teal {
+            background-color: #ccfbf1;
+            color: #0f766e;
+        }
+        .badge-orange {
+            background-color: #fed7aa;
+            color: #9a3412;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+    <!-- Header -->
+    <header class="bg-red-700 text-white shadow-md">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <i class="fas fa-book-open text-3xl mr-3"></i>
+                    <h1 class="text-2xl font-bold">Biblioteca Digital IB</h1>
+                </div>
+                
+                <!-- Barra de búsqueda -->
+                <div class="w-full md:w-1/3">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Buscar recursos, cursos o temas..." 
+                            class="w-full px-4 py-2 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <button id="searchBtn" class="absolute right-3 top-2.5 text-gray-500 hover:text-red-700">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Menú de navegación -->
+            <nav class="mt-4">
+                <ul class="flex flex-wrap justify-center space-x-1 md:space-x-4">
+                    <li>
+                        <button class="nav-btn px-4 py-2 rounded-lg hover:bg-red-800 transition-colors" data-section="courses">
+                            <i class="fas fa-graduation-cap mr-2"></i>Cursos IB
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-btn px-4 py-2 rounded-lg hover:bg-red-800 transition-colors" data-section="library">
+                            <i class="fas fa-books mr-2"></i>Biblioteca de Recursos
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-btn px-4 py-2 rounded-lg hover:bg-red-800 transition-colors" data-section="links">
+                            <i class="fas fa-link mr-2"></i>Links Funcionales
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-btn px-4 py-2 rounded-lg hover:bg-red-800 transition-colors" data-section="favorites">
+                            <i class="fas fa-star mr-2"></i>Mis Favoritos
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Sección de Cursos IB -->
+        <section id="courses-section" class="content-section fade-in">
+            <h2 class="text-3xl font-bold mb-6 text-red-700">Cursos IB</h2>
+            
+            <!-- Filtros -->
+            <div class="mb-6">
+                <div class="flex flex-wrap gap-2">
+                    <button class="filter-btn px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200 transition-colors" data-filter="all">
+                        Todos los cursos
+                    </button>
+                    <button class="filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors" data-filter="math">
+                        Matemáticas
+                    </button>
+                    <button class="filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors" data-filter="science">
+                        Ciencias
+                    </button>
+                    <button class="filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors" data-filter="humanities">
+                        Humanidades
+                    </button>
+                    <button class="filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors" data-filter="languages">
+                        Lenguas
+                    </button>
+                    <button class="filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors" data-filter="arts">
+                        Artes
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Grid de cursos -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Matemáticas AA NM -->
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-category="math">
+                    <div class="bg-red-600 text-white p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">Matemáticas AA NM</h3>
+                            <i class="fas fa-calculator text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Análisis y Enfoques Nivel Medio</p>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Recursos de clase:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Guías de estudio</li>
+                                <li>Ejercicios resueltos</li>
+                                <li>Calculadoras recomendadas</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Lecturas:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Libros de texto</li>
+                                <li>Artículos de matemáticas</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Google Drive:</h4>
+                            <input type="text" placeholder="Insertar enlace de Google Drive" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button class="view-resources-btn w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors" 
+                            data-course="math-aa-nm">
+                            Ver recursos detallados
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Matemáticas AI NM -->
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-category="math">
+                    <div class="bg-red-600 text-white p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">Matemáticas AI NM</h3>
+                            <i class="fas fa-chart-line text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Aplicaciones e Interpretación Nivel Medio</p>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Recursos de clase:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Guías de estudio</li>
+                                <li>Ejercicios resueltos</li>
+                                <li>Herramientas tecnológicas</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Lecturas:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Libros de texto</li>
+                                <li>Artículos de estadística</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Google Drive:</h4>
+                            <input type="text" placeholder="Insertar enlace de Google Drive" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button class="view-resources-btn w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors" 
+                            data-course="math-ai-nm">
+                            Ver recursos detallados
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Lengua y Literatura NS -->
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-category="languages">
+                    <div class="bg-gray-700 text-white p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">Lengua y Literatura NS</h3>
+                            <i class="fas fa-book text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Lengua y Literatura Nivel Superior</p>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Recursos de clase:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Guías de análisis literario</li>
+                                <li>Técnicas de escritura</li>
+                                <li>Recursos para la EE</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Lecturas:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Lista de obras prescritas</li>
+                                <li>Críticas literarias</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Google Drive:</h4>
+                            <input type="text" placeholder="Insertar enlace de Google Drive" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button class="view-resources-btn w-full bg-gray-700 text-white py-2 rounded-lg hover:bg-gray-800 transition-colors" 
+                            data-course="lang-lit-ns">
+                            Ver recursos detallados
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Historia NS -->
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-category="humanities">
+                    <div class="bg-gray-600 text-white p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">Historia de América NS</h3>
+                            <i class="fas fa-landmark text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Historia de América Nivel Superior</p>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Recursos de clase:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Líneas de tiempo</li>
+                                <li>Mapas históricos</li>
+                                <li>Fuentes primarias</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Lecturas:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Libros de historia</li>
+                                <li>Artículos académicos</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Google Drive:</h4>
+                            <input type="text" placeholder="Insertar enlace de Google Drive" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button class="view-resources-btn w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition-colors" 
+                            data-course="history-ns">
+                            Ver recursos detallados
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Física -->
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-category="science">
+                    <div class="bg-gray-800 text-white p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">Física</h3>
+                            <i class="fas fa-atom text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Física NS/NM</p>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Recursos de clase:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Simulaciones interactivas</li>
+                                <li>Problemas resueltos</li>
+                                <li>Videos explicativos</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Lecturas:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Libros de texto</li>
+                                <li>Artículos científicos</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Google Drive:</h4>
+                            <input type="text" placeholder="Insertar enlace de Google Drive" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button class="view-resources-btn w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-900 transition-colors" 
+                            data-course="physics">
+                            Ver recursos detallados
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Química -->
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-category="science">
+                    <div class="bg-gray-900 text-white p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">Química</h3>
+                            <i class="fas fa-flask text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Química NS/NM</p>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Recursos de clase:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Tabla periódica interactiva</li>
+                                <li>Prácticas de laboratorio</li>
+                                <li>Modelos moleculares</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Lecturas:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Libros de texto</li>
+                                <li>Artículos científicos</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Google Drive:</h4>
+                            <input type="text" placeholder="Insertar enlace de Google Drive" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button class="view-resources-btn w-full bg-gray-900 text-white py-2 rounded-lg hover:bg-black transition-colors" 
+                            data-course="chemistry">
+                            Ver recursos detallados
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Biología NM -->
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-category="science">
+                    <div class="bg-green-700 text-white p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">Biología NM</h3>
+                            <i class="fas fa-dna text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Biología Nivel Medio</p>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Recursos de clase:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Diagramas celulares</li>
+                                <li>Procesos biológicos</li>
+                                <li>Investigaciones de campo</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Lecturas:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Libros de texto</li>
+                                <li>Artículos científicos</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Google Drive:</h4>
+                            <input type="text" placeholder="Insertar enlace de Google Drive" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button class="view-resources-btn w-full bg-green-700 text-white py-2 rounded-lg hover:bg-green-800 transition-colors" 
+                            data-course="biology-nm">
+                            Ver recursos detallados
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Artes -->
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-category="arts">
+                    <div class="bg-pink-600 text-white p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">Artes</h3>
+                            <i class="fas fa-palette text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Artes Visuales, Teatro, Música</p>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Recursos de clase:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Galerías virtuales</li>
+                                <li>Partituras y guiones</li>
+                                <li>Técnicas artísticas</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Lecturas:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Historia del arte</li>
+                                <li>Teoría musical</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Google Drive:</h4>
+                            <input type="text" placeholder="Insertar enlace de Google Drive" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button class="view-resources-btn w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition-colors" 
+                            data-course="arts">
+                            Ver recursos detallados
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Sociedad Digital -->
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-category="humanities">
+                    <div class="bg-indigo-600 text-white p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">Sociedad Digital</h3>
+                            <i class="fas fa-laptop-code text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Tecnología y Sociedad</p>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Recursos de clase:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Estudios de caso</li>
+                                <li>Herramientas digitales</li>
+                                <li>Ética tecnológica</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Lecturas:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Artículos sobre tecnología</li>
+                                <li>Libros de sociedad digital</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Google Drive:</h4>
+                            <input type="text" placeholder="Insertar enlace de Google Drive" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button class="view-resources-btn w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition-colors" 
+                            data-course="digital-society">
+                            Ver recursos detallados
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- SAS -->
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-category="humanities">
+                    <div class="bg-teal-600 text-white p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">SAS</h3>
+                            <i class="fas fa-globe-americas text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Sistemas Ambientales y Sociedades</p>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Recursos de clase:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Estudios de ambientales</li>
+                                <li>Investigaciones de campo</li>
+                                <li>Simulaciones ecológicas</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Lecturas:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Artículos ambientales</li>
+                                <li>Informes científicos</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Google Drive:</h4>
+                            <input type="text" placeholder="Insertar enlace de Google Drive" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button class="view-resources-btn w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition-colors" 
+                            data-course="sas">
+                            Ver recursos detallados
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- CDES -->
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-category="humanities">
+                    <div class="bg-orange-600 text-white p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">CDES</h3>
+                            <i class="fas fa-running text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Conocimiento del Desarrollo Económico Sostenible</p>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Recursos de clase:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Indicadores de desarrollo</li>
+                                <li>Estudios de sostenibilidad</li>
+                                <li>Modelos económicos</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Lecturas:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Artículos económicos</li>
+                                <li>Informes de desarrollo</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Google Drive:</h4>
+                            <input type="text" placeholder="Insertar enlace de Google Drive" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button class="view-resources-btn w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition-colors" 
+                            data-course="cdes">
+                            Ver recursos detallados
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Gestión Empresarial -->
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-category="humanities">
+                    <div class="bg-gray-700 text-white p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">Gestión Empresarial</h3>
+                            <i class="fas fa-briefcase text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Gestión Empresarial NS/NM</p>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Recursos de clase:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Casos de estudio</li>
+                                <li>Teorías de gestión</li>
+                                <li>Herramientas de análisis</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Lecturas:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Libros de gestión</li>
+                                <li>Artículos de negocios</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Google Drive:</h4>
+                            <input type="text" placeholder="Insertar enlace de Google Drive" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button class="view-resources-btn w-full bg-gray-700 text-white py-2 rounded-lg hover:bg-gray-800 transition-colors" 
+                            data-course="business-management">
+                            Ver recursos detallados
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Inglés -->
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-category="languages">
+                    <div class="bg-blue-600 text-white p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">Inglés</h3>
+                            <i class="fas fa-language text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Inglés NS/NM</p>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Recursos de clase:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Gramática y vocabulario</li>
+                                <li>Comprensión auditiva</li>
+                                <li>Preparación para exámenes</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Lecturas:</h4>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Libros de literatura</li>
+                                <li>Artículos de interés</li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Google Drive:</h4>
+                            <input type="text" placeholder="Insertar enlace de Google Drive" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button class="view-resources-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" 
+                            data-course="english">
+                            Ver recursos detallados
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Biblioteca de Recursos -->
+        <section id="library-section" class="content-section hidden">
+            <h2 class="text-3xl font-bold mb-6 text-red-700">Biblioteca de Recursos</h2>
+            
+            <!-- Filtros por tipo de recurso -->
+            <div class="mb-6">
+                <div class="flex flex-wrap gap-2">
+                    <button class="resource-filter-btn px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200 transition-colors" data-filter="all">
+                        Todos los recursos
+                    </button>
+                    <button class="resource-filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors" data-filter="books">
+                        <i class="fas fa-book mr-2"></i>Libros
+                    </button>
+                    <button class="resource-filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors" data-filter="articles">
+                        <i class="fas fa-newspaper mr-2"></i>Artículos
+                    </button>
+                    <button class="resource-filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors" data-filter="videos">
+                        <i class="fas fa-video mr-2"></i>Videos
+                    </button>
+                    <button class="resource-filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors" data-filter="podcasts">
+                        <i class="fas fa-podcast mr-2"></i>Podcasts
+                    </button>
+                    <button class="resource-filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors" data-filter="simulators">
+                        <i class="fas fa-desktop mr-2"></i>Simuladores
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Grid de recursos -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Libros -->
+                <div class="resource-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-type="books">
+                    <div class="bg-red-100 p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-red-800">Libros de Texto IB</h3>
+                            <i class="fas fa-book text-red-600 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Colección completa de libros de texto oficiales y recomendados para el Bachillerato Internacional.</p>
+                        <div class="flex justify-between items-center">
+                            <a href="https://sites.google.com/view/coarinos-/ibdp/libros" target="_blank" class="text-red-600 hover:text-red-800 font-medium">
+                                Ver colección <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                            <button class="favorite-btn text-gray-400 hover:text-red-500" data-id="ib-textbooks">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Artículos -->
+                <div class="resource-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-type="articles">
+                    <div class="bg-gray-100 p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-gray-800">Artículos Académicos</h3>
+                            <i class="fas fa-newspaper text-gray-600 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Selección de artículos académicos relevantes para las investigaciones del IB.</p>
+                        <div class="flex justify-between items-center">
+                            <a href="https://www.jstor.org/" target="_blank" class="text-gray-600 hover:text-gray-800 font-medium">
+                                Ver artículos <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                            <button class="favorite-btn text-gray-400 hover:text-red-500" data-id="academic-articles">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Videos -->
+                <div class="resource-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-type="videos">
+                    <div class="bg-gray-100 p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-gray-800">Clases Grabadas</h3>
+                            <i class="fas fa-video text-gray-600 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Grabaciones de clases y conferencias de profesores del IB.</p>
+                        <div class="flex justify-between items-center">
+                            <a href="#" target="_blank" class="text-gray-600 hover:text-gray-800 font-medium">
+                                Ver videos <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                            <button class="favorite-btn text-gray-400 hover:text-red-500" data-id="recorded-classes">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Simuladores -->
+                <div class="resource-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200" data-type="simulators">
+                    <div class="bg-gray-100 p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-gray-800">Simuladores Interactivos</h3>
+                            <i class="fas fa-desktop text-gray-600 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-600 mb-4">Simuladores interactivos para experimentos de física, química y biología.</p>
+                        <div class="flex justify-between items-center">
+                            <a href="https://phet.colorado.edu/" target="_blank" class="text-gray-600 hover:text-gray-800 font-medium">
+                                Usar simuladores <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                            <button class="favorite-btn text-gray-400 hover:text-red-500" data-id="science-simulators">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Links Funcionales -->
+        <section id="links-section" class="content-section hidden">
+            <h2 class="text-3xl font-bold mb-6 text-red-700">Links Funcionales</h2>
+            
+            <!-- Lista de enlaces por categorías -->
+            <div class="space-y-8">
+                <!-- Académicos -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-red-700">Recursos Académicos</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-university text-red-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">JSTOR</h4>
+                                <p class="text-sm text-gray-600 mb-2">Base de datos académica con acceso a miles de libros, artículos y documentos primarios.</p>
+                                <a href="https://www.jstor.org/" target="_blank" class="text-red-600 hover:text-red-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-search text-red-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">Google Scholar</h4>
+                                <p class="text-sm text-gray-600 mb-2">Motor de búsqueda especializado en literatura académica de todas las disciplinas.</p>
+                                <a href="https://scholar.google.com/" target="_blank" class="text-red-600 hover:text-red-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-graduation-cap text-red-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">Khan Academy</h4>
+                                <p class="text-sm text-gray-600 mb-2">Plataforma educativa con lecciones gratuitas sobre matemáticas, ciencias y más.</p>
+                                <a href="https://www.khanacademy.org/" target="_blank" class="text-red-600 hover:text-red-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-book-open text-red-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">IB Resources</h4>
+                                <p class="text-sm text-gray-600 mb-2">Recursos oficiales y materiales de apoyo para estudiantes del Bachillerato Internacional.</p>
+                                <a href="https://www.ibo.org/" target="_blank" class="text-red-600 hover:text-red-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Investigación -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-gray-700">Herramientas de Investigación</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-quote-right text-gray-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">Zotero</h4>
+                                <p class="text-sm text-gray-600 mb-2">Herramienta gratuita para recopilar, organizar, citar y compartir investigaciones.</p>
+                                <a href="https://www.zotero.org/" target="_blank" class="text-gray-600 hover:text-gray-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-file-alt text-gray-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">Mendeley</h4>
+                                <p class="text-sm text-gray-600 mb-2">Gestor de referencias y redactor académico para organizar investigaciones.</p>
+                                <a href="https://www.mendeley.com/" target="_blank" class="text-gray-600 hover:text-gray-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-chart-bar text-gray-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">Statista</h4>
+                                <p class="text-sm text-gray-600 mb-2">Portal de estadísticas que proporciona datos, estudios e informes de mercado.</p>
+                                <a href="https://www.statista.com/" target="_blank" class="text-gray-600 hover:text-gray-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-globe text-gray-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">World Digital Library</h4>
+                                <p class="text-sm text-gray-600 mb-2">Biblioteca digital con materiales culturales de todo el mundo.</p>
+                                <a href="https://www.wdl.org/" target="_blank" class="text-gray-600 hover:text-gray-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Herramientas -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-gray-700">Herramientas Digitales</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-tasks text-gray-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">Trello</h4>
+                                <p class="text-sm text-gray-600 mb-2">Herramienta de gestión de proyectos para organizar tareas y colaborar en equipo.</p>
+                                <a href="https://trello.com/" target="_blank" class="text-gray-600 hover:text-gray-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-sticky-note text-gray-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">Evernote</h4>
+                                <p class="text-sm text-gray-600 mb-2">Aplicación para tomar notas, organizar listas y archivar información.</p>
+                                <a href="https://evernote.com/" target="_blank" class="text-gray-600 hover:text-gray-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-brain text-gray-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">MindMeister</h4>
+                                <p class="text-sm text-gray-600 mb-2">Herramienta para crear mapas mentales y organizar ideas visualmente.</p>
+                                <a href="https://www.mindmeister.com/" target="_blank" class="text-gray-600 hover:text-gray-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-language text-gray-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">Grammarly</h4>
+                                <p class="text-sm text-gray-600 mb-2">Asistente de escritura que ayuda a mejorar la gramática y el estilo.</p>
+                                <a href="https://www.grammarly.com/" target="_blank" class="text-gray-600 hover:text-gray-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Diccionarios -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-gray-700">Diccionarios y Referencia</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-book text-gray-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">RAE</h4>
+                                <p class="text-sm text-gray-600 mb-2">Diccionario de la Real Academia Española para consultas lingüísticas.</p>
+                                <a href="https://dle.rae.es/" target="_blank" class="text-gray-600 hover:text-gray-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-language text-gray-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">WordReference</h4>
+                                <p class="text-sm text-gray-600 mb-2">Diccionarios multilingües con foros de discusión sobre traducciones.</p>
+                                <a href="https://www.wordreference.com/" target="_blank" class="text-gray-600 hover:text-gray-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-globe-americas text-gray-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">Merriam-Webster</h4>
+                                <p class="text-sm text-gray-600 mb-2">Diccionario y tesauro en inglés con definiciones y sinónimos.</p>
+                                <a href="https://www.merriam-webster.com/" target="_blank" class="text-gray-600 hover:text-gray-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200">
+                            <i class="fas fa-calculator text-gray-500 text-2xl mr-4 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-bold">Wolfram Alpha</h4>
+                                <p class="text-sm text-gray-600 mb-2">Motor de conocimiento computacional para resolver problemas matemáticos y científicos.</p>
+                                <a href="https://www.wolframalpha.com/" target="_blank" class="text-gray-600 hover:text-gray-800 text-sm">
+                                    Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Enlaces agregados por el usuario -->
+                <div id="user-links-section">
+                    <h3 class="text-xl font-bold mb-4 text-gray-700">Enlaces Agregados</h3>
+                    <div id="user-links-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Los enlaces agregados por el usuario aparecerán aquí -->
+                        <div class="bg-gray-100 rounded-lg shadow-md p-4 text-center text-gray-500">
+                            No hay enlaces agregados aún
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Favoritos -->
+        <section id="favorites-section" class="content-section hidden">
+            <h2 class="text-3xl font-bold mb-6 text-red-700">Mis Favoritos</h2>
+            
+            <div id="favorites-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Los favoritos aparecerán aquí -->
+                <div class="bg-gray-100 rounded-lg shadow-md p-8 text-center text-gray-500 col-span-full">
+                    No tienes recursos favoritos guardados aún
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal para ver recursos detallados de un curso -->
+        <div id="course-resources-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="modal-course-title" class="text-2xl font-bold text-red-800">Recursos del Curso</h3>
+                        <button id="close-modal-btn" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="modal-course-content" class="space-y-6">
+                        <!-- El contenido del curso se cargará aquí dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Botón flotante para agregar enlaces -->
+    <div id="fab" class="fab">
+        <i class="fas fa-plus"></i>
+    </div>
+
+    <!-- Formulario flotante para agregar enlaces -->
+    <div id="form-container" class="form-container">
+        <h3 class="text-lg font-bold mb-4 text-red-800">Agregar Nuevo Enlace</h3>
+        <form id="add-link-form" class="space-y-4">
+            <div>
+                <label for="link-title" class="block text-sm font-medium text-gray-700 mb-1">Título</label>
+                <input type="text" id="link-title" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+            </div>
+            <div>
+                <label for="link-url" class="block text-sm font-medium text-gray-700 mb-1">URL</label>
+                <input type="url" id="link-url" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+            </div>
+            <div>
+                <label for="link-category" class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+                <select id="link-category" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <option value="academic">Académico</option>
+                    <option value="research">Investigación</option>
+                    <option value="tools">Herramientas</option>
+                    <option value="dictionaries">Diccionarios</option>
+                    <option value="other">Otros</option>
+                </select>
+            </div>
+            <div>
+                <label for="link-description" class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                <textarea id="link-description" rows="2"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+            </div>
+            <div class="flex space-x-2">
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex-1">
+                    Agregar Enlace
+                </button>
+                <button type="button" id="cancel-form-btn" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors flex-1">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Notificación -->
+    <div id="notification" class="notification">
+        Enlace agregado correctamente
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-red-700 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold mb-2">Biblioteca Digital IB</h3>
+                    <p class="text-red-200">Recursos para estudiantes del Bachillerato Internacional</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-red-200 hover:text-white transition-colors">
+                        <i class="fab fa-github text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-red-200 hover:text-white transition-colors">
+                        <i class="fab fa-twitter text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-red-200 hover:text-white transition-colors">
+                        <i class="fab fa-linkedin text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-8 pt-4 border-t border-red-800 text-center text-red-200 text-sm">
+                <p>&copy; 2023 Biblioteca Digital IB. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Datos de los recursos detallados por curso
+        const courseResources = {
+            'math-aa-nm': {
+                title: 'Matemáticas AA NM',
+                icon: 'fas fa-calculator',
+                color: 'red',
+                drive: 'https://drive.google.com/drive/folders/1qhG3QWEX3ff5lt1iSvckg1a1x19mlR_W?usp=drive_link',
+                resources: [
+                    {
+                        type: 'Guías de estudio',
+                        items: [
+                            { 
+                                name: 'Guía oficial de Matemáticas AA NM', 
+                                link: 'https://drive.google.com/file/d/10_LhsfVgiTXOBzpB1dV_mblLtSMlGefx/view?usp=drive_link',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Páginas de ayuda para fórmulas y conceptos', 
+                                link: 'https://sites.google.com/view/coarinos-/ibdp/matemáticas',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'IB Dead - Math', 
+                                link: 'https://ib-dead.weebly.com/ib-math.html',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Christos Nikolaidis - Math AA', 
+                                link: 'https://www.christosnikolaidis.com/en/maa',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Ayudas con la investigación', 
+                                link: 'https://drive.google.com/file/d/1XV4MDI0-t2FhjMLbjWV-FAOWpLV9mCnq/view',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Ejercicios resueltos',
+                        items: [
+                            { 
+                                name: 'Ejercicios resueltos', 
+                                link: 'https://drive.google.com/file/d/1mr8FFnL4FK6WKLoMA-uX64cXMQPnXse3/view',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Ejercicios adicionales', 
+                                link: 'https://pixeldrain.com/u/8d1zVADj',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Mr Mac Maths', 
+                                link: 'https://www.mrmacmaths.com',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Revision Village - Math AA', 
+                                link: 'https://www-revisionvillage-com.translate.goog/ib-math/analysis-and-approaches-sl/?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc&_x_tr_hist=true',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Exámenes',
+                        items: [
+                            { 
+                                name: 'AA NM P1', 
+                                link: 'https://drive.google.com/file/d/18odVSIxGlF62aPVskUfxb-UOXPkEKp88/view?usp=drive_link',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'AA NM P2', 
+                                link: 'https://drive.google.com/file/d/1qwGci-Y25YOfDBeSbDaebNJeMG2S6HWj/view?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Material gratuito',
+                        items: [
+                            { 
+                                name: 'Oxford - Matemáticas', 
+                                link: 'https://global.oup.com/education/secondary/curricula/ib-diploma/mathematics/ib-matematicas/?region=international&srsltid=AfmBOopr_0roa4xHctF9ZI9HJHNKQKhK_ZQoCUbZiyBIqU5O8mC4Eaas',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Canales de YouTube',
+                        items: [
+                            { 
+                                name: 'El Traductor', 
+                                link: 'http://www.youtube.com/@eltraductor_ok',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'MatesMike', 
+                                link: 'http://www.youtube.com/@MatesMike',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Todo Matemática', 
+                                link: 'http://www.youtube.com/@todomatematica',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Herramientas tecnológicas',
+                        items: [
+                            { 
+                                name: 'Wolfram Alpha', 
+                                link: 'https://www.wolframalpha.com/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Desmos', 
+                                link: 'https://www.desmos.com/calculator?lang=es',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Recursos adicionales',
+                        items: [
+                            { 
+                                name: 'Ingeniería', 
+                                link: 'https://drive.google.com/drive/folders/1ZyhYe_MHmqaRcELQjCRtVOAhHUVgQqoy?usp=drive_link',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Cálculo', 
+                                link: 'https://drive.google.com/drive/folders/1CBzE0oTOegt9g2VjIE7_FbA8adCpQSeZ?usp=drive_link',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Matemáticas', 
+                                link: 'https://drive.google.com/drive/folders/1H7dxGmMrH01TW3xzTpdLNwOgHgEB7PsJ?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    }
+                ]
+            },
+            'math-ai-nm': {
+                title: 'Matemáticas AI NM',
+                icon: 'fas fa-chart-line',
+                color: 'red',
+                drive: 'https://drive.google.com/drive/folders/1-OzAMy8Bffmxj-QL_caxxCLS1KwgapMz?usp=drive_link',
+                resources: [
+                    {
+                        type: 'Guías de estudio',
+                        items: [
+                            { 
+                                name: 'Páginas de ayuda para fórmulas y conceptos', 
+                                link: 'https://sites.google.com/view/coarinos-/ibdp/matemáticas',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'IB Dead - Math AI', 
+                                link: 'https://ib-dead.weebly.com/ib-math.html',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Christos Nikolaidis - Math AI', 
+                                link: 'https://www.christosnikolaidis.com/en/mai',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Ejercicios resueltos',
+                        items: [
+                            { 
+                                name: 'Ejercicios resueltos', 
+                                link: 'https://drive.google.com/file/d/1mr8FFnL4FK6WKLoMA-uX64cXMQPnXse3/view',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Ejercicios adicionales', 
+                                link: 'https://pixeldrain.com/u/8d1zVADj',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Mr Mac Maths', 
+                                link: 'https://www.mrmacmaths.com',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Revision Village - Math AI', 
+                                link: 'https://www-revisionvillage-com.translate.goog/ib-math/applications-and-interpretation-sl/?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc&_x_tr_hist=true',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Material gratuito',
+                        items: [
+                            { 
+                                name: 'Oxford - Matemáticas', 
+                                link: 'https://global.oup.com/education/secondary/curricula/ib-diploma/mathematics/ib-matematicas/?region=international&srsltid=AfmBOopr_0roa4xHctF9ZI9HJHNKQKhK_ZQoCUbZiyBIqU5O8mC4Eaas',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Canales de YouTube',
+                        items: [
+                            { 
+                                name: 'El Traductor', 
+                                link: 'http://www.youtube.com/@eltraductor_ok',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'MatesMike', 
+                                link: 'http://www.youtube.com/@MatesMike',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Todo Matemática', 
+                                link: 'http://www.youtube.com/@todomatematica',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Herramientas tecnológicas',
+                        items: [
+                            { 
+                                name: 'Wolfram Alpha', 
+                                link: 'https://www.wolframalpha.com/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Desmos', 
+                                link: 'https://www.desmos.com/calculator?lang=es',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Recursos adicionales',
+                        items: [
+                            { 
+                                name: 'Ingeniería', 
+                                link: 'https://drive.google.com/drive/folders/1ZyhYe_MHmqaRcELQjCRtVOAhHUVgQqoy?usp=drive_link',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Cálculo', 
+                                link: 'https://drive.google.com/drive/folders/1CBzE0oTOegt9g2VjIE7_FbA8adCpQSeZ?usp=drive_link',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Matemáticas', 
+                                link: 'https://drive.google.com/drive/folders/1H7dxGmMrH01TW3xzTpdLNwOgHgEB7PsJ?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    }
+                ]
+            },
+            'lang-lit-ns': {
+                title: 'Lengua y Literatura NS',
+                icon: 'fas fa-book',
+                color: 'gray',
+                drive: 'https://drive.google.com/drive/folders/1Y2HNDX7KllVYDOY7kgfuMMDLdGR20bC6?usp=drive_link',
+                resources: [
+                    {
+                        type: 'Guías de análisis literario',
+                        items: [
+                            { 
+                                name: 'Guías de análisis literario', 
+                                link: 'https://dougslangandlit.blog/20-20',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Técnicas de escritura',
+                        items: [
+                            { 
+                                name: 'Técnicas de escritura', 
+                                link: 'https://drive.google.com/drive/folders/13HopuvdkmeGPT1pxnTiPc2YzWS0OuhQY?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Recursos para la EE (Monografía)',
+                        items: [
+                            { 
+                                name: 'Guía definitiva', 
+                                link: 'https://drive.google.com/file/d/1LEx6tyOOlI1OQ4DqL2H-AFRE1d-kDq0B/view?usp=sharing',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Narrativa',
+                        items: [
+                            { 
+                                name: 'Narrativa', 
+                                link: 'https://drive.google.com/drive/folders/1UUhOCA6u4js6RGinau4K0w4zAU6A_lKJ?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Lírica',
+                        items: [
+                            { 
+                                name: 'Lírica', 
+                                link: 'https://drive.google.com/drive/folders/1QxFDX8VttlecQgubOtAsdhW-Qb0lbXj1?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    }
+                ]
+            },
+            'history-ns': {
+                title: 'Historia de América NS',
+                icon: 'fas fa-landmark',
+                color: 'gray',
+                drive: 'https://drive.google.com/drive/folders/1wn1gL6eCf-2IsMaESd7n8MewabRkGjnU?usp=drive_link',
+                resources: [
+                    {
+                        type: 'Colección de libros de historia',
+                        items: [
+                            { 
+                                name: 'Colección de libros de historia', 
+                                link: 'https://drive.google.com/drive/folders/1_bLPi16YrHN9Xe5LdO2w-5GBOooIZJxb?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Recursos en inglés',
+                        items: [
+                            { 
+                                name: 'Recursos en inglés', 
+                                link: 'https://drive.google.com/drive/folders/1Onp4LrqgAJ6GHtpTVTeNn5oUGSUEJ-1n?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Colección',
+                        items: [
+                            { 
+                                name: 'Colección', 
+                                link: 'https://drive.google.com/drive/folders/1RN7TwqkVvMXJnkiCexJoVAErHIXxRVXG?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Guía Algargos',
+                        items: [
+                            { 
+                                name: 'Guía Algargos', 
+                                link: 'https://algargos.jimdofree.com/ib-historia-nm-ns',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Canales de YouTube sugeridos',
+                        items: [
+                            { 
+                                name: 'OverSimplified', 
+                                link: 'http://www.youtube.com/@OverSimplified',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Almuerzo Historia', 
+                                link: 'http://www.youtube.com/@almuerzahistoria',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'A Toda Leche', 
+                                link: 'http://www.youtube.com/@Atodaleche',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Memorias de Pez', 
+                                link: 'http://www.youtube.com/@MemoriasDePez',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Mitsi Studio', 
+                                link: 'http://www.youtube.com/@mitsistudio',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Génesis 2:24', 
+                                link: 'http://www.youtube.com/@genesis2.24',
+                                favorite: false 
+                            }
+                        ]
+                    }
+                ]
+            },
+            'physics': {
+                title: 'Física',
+                icon: 'fas fa-atom',
+                color: 'gray',
+                drive: 'https://drive.google.com/drive/folders/1DMvsivZR3Gk1qmqxlDPUv-1ef5j0Vucv?usp=sharing',
+                resources: [
+                    {
+                        type: 'Para investigaciones',
+                        items: [
+                            { 
+                                name: 'Para investigaciones', 
+                                link: 'https://drive.google.com/drive/folders/1hbXOk9FUVHAz_hhmkvY8hP8z6s_Qp1WB?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Ideas',
+                        items: [
+                            { 
+                                name: 'Ideas', 
+                                link: 'https://drive.google.com/file/d/1jwx_RFRpsT6GpelxAG1pnJz9TKnrB7T2/view',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Checklist',
+                        items: [
+                            { 
+                                name: 'Checklist', 
+                                link: 'https://drive.google.com/file/d/1aiIjqrakU0if2ru1wKJmn5SCLgNRsY7G/view',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Definición (Inglés)',
+                        items: [
+                            { 
+                                name: 'Definición (Inglés)', 
+                                link: 'https://docs.google.com/document/d/10pA_wf9fhX81hFvqVGxyHls55pVf4d6uBYtsippASJM/',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Temas específicos',
+                        items: [
+                            { 
+                                name: 'Mechanics', 
+                                link: 'https://pale-derby-955.notion.site/mechanics-67294d758c884407a472837d319406d8',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Waves', 
+                                link: 'https://pale-derby-955.notion.site/waves-31187508cdd84e37ac00ea9bc469bdb1',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Materials', 
+                                link: 'https://pale-derby-955.notion.site/materials-4de70ba5ea3e4d779ebc2cc58d763f6d',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Electric circuits', 
+                                link: 'https://pale-derby-955.notion.site/electric-circuits-2a4ec64476434e2a962d6af217f645c1',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Quantum & Nuclear', 
+                                link: 'https://drive.google.com/file/d/18R2kXoVlpmmpmGPBQjnX5H8XBsYOVPuA/view',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Astrophysics D.2', 
+                                link: 'https://drive.google.com/file/d/1s1A5G1E7S-_sQ4gPvnCDuhvtPBbpYe_C/view',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Astrophysics D.3', 
+                                link: 'https://drive.google.com/file/d/18ZCtIcOpuYKUKJossM7rTnozK_YP_4n6/view',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Anotaciones (inglés)',
+                        items: [
+                            { 
+                                name: 'Anotaciones (inglés)', 
+                                link: 'https://drive.google.com/drive/folders/1r1_G8-jajpR8zvV9MdIMAfD1fZKWTTGL?usp=sharing',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Apuntes',
+                        items: [
+                            { 
+                                name: 'Apuntes', 
+                                link: 'https://drive.google.com/drive/folders/1n1811pC0LmVOe68iE7nxvFEB8GagrJeq?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Temas (Español)',
+                        items: [
+                            { 
+                                name: 'Temas (Español)', 
+                                link: 'https://fisicayquimicaonline.blogspot.com/p/fisica-ib-nivel-medio.html',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Canales de YouTube',
+                        items: [
+                            { 
+                                name: 'El Traductor', 
+                                link: 'http://www.youtube.com/@eltraductor_ok',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Física del Mal', 
+                                link: 'http://www.youtube.com/c/F%C3%ADsicadelMal',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Revision Village', 
+                                link: 'http://www.youtube.com/@revisionvillage',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Date Un Vlog', 
+                                link: 'http://www.youtube.com/@dateunvlog',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'IB Wave Channel', 
+                                link: 'http://www.youtube.com/@ibwavechannel',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Physics Online', 
+                                link: 'http://www.youtube.com/@PhysicsOnline',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Cursos de Física', 
+                                link: 'http://www.youtube.com/@cursosdefisica',
+                                favorite: false 
+                            }
+                        ]
+                    }
+                ]
+            },
+            'chemistry': {
+                title: 'Química',
+                icon: 'fas fa-flask',
+                color: 'gray',
+                drive: 'https://drive.google.com/drive/folders/1ieOhbakFvZNH8MeNGeojzrsYk3GxZM-6?usp=drive_link',
+                resources: [
+                    {
+                        type: 'Recursos Química',
+                        items: [
+                            { 
+                                name: 'Recursos Química', 
+                                link: 'https://drive.google.com/drive/folders/14BkQhoxN3BDEO0uHDLHNSgo_NDOpeXq1?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Recursos adicionales',
+                        items: [
+                            { 
+                                name: 'Recursos adicionales 1', 
+                                link: 'https://drive.google.com/drive/folders/1R8Oy4QMz8YfDU-raUo1nhsy5iyQh-CZg?usp=drive_link',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Recursos adicionales 2', 
+                                link: 'https://drive.google.com/drive/folders/1vJ1E0eIdeFQc9V4O8sTvXtYZYdAlrpY8?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Sitios web',
+                        items: [
+                            { 
+                                name: 'IB Your Way Out - Chemistry HL', 
+                                link: 'https://ibyourwayout.wordpress.com/chemistry-hl',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'IB Alchemy', 
+                                link: 'https://ibalchemy.com',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'IB Dead - Chemistry', 
+                                link: 'https://ib-dead.weebly.com/ib-chemistry.html',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Master Organic Chemistry', 
+                                link: 'https://www.masterorganicchemistry.com',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Temas',
+                        items: [
+                            { 
+                                name: 'Save My Exams - Chemistry', 
+                                link: 'https://www-savemyexams-com.translate.goog/learning-hub/subject-guides/ib-chemistry-topics/?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc&_x_tr_hist=true',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Temas 1', 
+                                link: 'https://drive.google.com/drive/folders/1B0nNAClhr5Cum_MfNLss9p_G3BoFJDNr?usp=drive_link',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Temas 2', 
+                                link: 'https://drive.google.com/drive/folders/18yj5zytT6PrJfqf7o-fOFrmSWltDVGuk?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Notas HL',
+                        items: [
+                            { 
+                                name: 'Notas HL', 
+                                link: 'https://drive.google.com/drive/folders/1MI5Ipuh1LJgAqzUZyG1ugkPSdgNmNWMf?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Ideas',
+                        items: [
+                            { 
+                                name: 'Ideas', 
+                                link: 'https://drive.google.com/file/d/1R5GhiLCUbUt9atnx-c5hlR32WlDPnyAT/view',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Prácticas de laboratorio',
+                        items: [
+                            { 
+                                name: 'Prácticas de laboratorio', 
+                                link: 'https://docs.google.com/document/d/1SQFW0X47boZSyhGeH-RgWnqtxjf6p1d3B4UZZ_TGH-8/edit',
+                                favorite: false 
+                            }
+                        ]
+                    }
+                ]
+            },
+            'biology-nm': {
+                title: 'Biología NM',
+                icon: 'fas fa-dna',
+                color: 'green',
+                drive: 'https://drive.google.com/drive/folders/1cfB0QdmvyVkLTJucIEBxFN6rQc9A8Xo4?usp=drive_link',
+                resources: [
+                    {
+                        type: 'Recursos web',
+                        items: [
+                            { 
+                                name: 'IB BioNinja', 
+                                link: 'https://ib.bioninja.com.au/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'IB Dead - Biology', 
+                                link: 'https://ib-dead.weebly.com/ib-biology.html',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'IB Your Way Out - Biology HL', 
+                                link: 'https://ibyourwayout.wordpress.com/biology-hl/',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Temas Español',
+                        items: [
+                            { 
+                                name: 'Temas Español', 
+                                link: 'https://drive.google.com/drive/folders/1p-OvOCKdc8LsusyRQwqiBuE-jXbfD3yo?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Recursos de estudio',
+                        items: [
+                            { 
+                                name: 'Padlet for memorising classifications', 
+                                link: 'https://padlet.com/dasha28/5-3-classification-yckqnjviiqdf2wcx',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Written notes (all topics)', 
+                                link: 'https://drive.google.com/file/d/1VxF_lWAWeoVI64spVlkLYpNFczmwfpjz/view',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'PowerPoint presentations all topics', 
+                                link: 'https://drive.google.com/drive/folders/1BKmZcvPGP2YI8T9ndC-wTmQoxqJTkv52',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Cell biology, molecular biology, and nucleic acid notes', 
+                                link: 'https://drive.google.com/file/d/1o6LkiBdr3XQvATPAsChPZkcuG9D4cw1C/view',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Genetics notes', 
+                                link: 'https://drive.google.com/file/d/12Ag4HECkLll-yR-pz4jdwdoCfZxTX3Mp/view',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'SL notes', 
+                                link: 'https://drive.google.com/drive/folders/14xb45vwruhOFMWKHYAl6FgstD0v749Ch',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Core + Option D', 
+                                link: 'https://drive.google.com/file/d/1Gu7c5NSUENKDMEjH5cFMTScKKle9oGec/view',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'SL Quizlet', 
+                                link: 'https://quizlet.com/loisxm/folders/ib-biology/sets',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'NOTAS',
+                        items: [
+                            { 
+                                name: 'NOTAS', 
+                                link: 'https://www-iitianacademy-com.translate.goog/ib-myp-4-5-chemistry-matter-study-notes/?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Simulaciones',
+                        items: [
+                            { 
+                                name: 'Simulaciones', 
+                                link: 'https://darkoficialeducacion1.blogspot.com/p/simuladores-biologia-ib-may-21.html',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Monografía de Biología',
+                        items: [
+                            { 
+                                name: 'Monografía de Biología', 
+                                link: 'https://www.youtube.com/watch?v=S9EhhFoDbQM&t=4209s',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'COAR',
+                        items: [
+                            { 
+                                name: 'COAR', 
+                                link: 'https://sites.google.com/view/coarinos-/ibdp/biología-nm',
+                                favorite: false 
+                            }
+                        ]
+                    }
+                ]
+            },
+            'arts': {
+                title: 'Artes',
+                icon: 'fas fa-palette',
+                color: 'pink',
+                drive: 'https://drive.google.com/drive/folders/1mWAinnYDW0rQq1r6bBpmKBn1VnUb7ZgR?usp=drive_link',
+                resources: [
+                    {
+                        type: 'Recursos',
+                        items: [
+                            { 
+                                name: 'Recursos de Artes', 
+                                link: 'https://drive.google.com/drive/folders/1mWAinnYDW0rQq1r6bBpmKBn1VnUb7ZgR?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    }
+                ]
+            },
+            'digital-society': {
+                title: 'Sociedad Digital',
+                icon: 'fas fa-laptop-code',
+                color: 'indigo',
+                drive: 'https://drive.google.com/drive/folders/1CDJOcp8s_ig6PT1nvAa3x3N3OrVPMD7o?usp=drive_link',
+                resources: [
+                    {
+                        type: 'Notas',
+                        items: [
+                            { 
+                                name: 'Notas', 
+                                link: 'https://drive.google.com/drive/folders/1Wz_P5O8hX6atKVKcSdb4g5CUpknXAWBc?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Recursos de estudio',
+                        items: [
+                            { 
+                                name: 'Recursos de estudio', 
+                                link: 'https://drive.google.com/drive/folders/1jebv20EbgwWj6Y7r0I0r8QJjc506GV5B?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Esencial',
+                        items: [
+                            { 
+                                name: 'Esencial', 
+                                link: 'https://drive.google.com/drive/folders/1NebUTPRiPsNC9dmlEvMAMfu6NmW3dhgV?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Guía',
+                        items: [
+                            { 
+                                name: 'Guía', 
+                                link: 'https://drive.google.com/file/d/1YLZ7KqKklzyrKSL-dbhISl7_gc_nH10v/view?usp=classroom_web&authuser=0',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Libro',
+                        items: [
+                            { 
+                                name: 'Libro', 
+                                link: 'https://drive.google.com/file/d/1UB6v7UGAJKRLM-qRGRHkvnCb_G1BssZY/view?usp=classroom_web&authuser=0',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Estudios ES TISG',
+                        items: [
+                            { 
+                                name: 'Estudios ES TISG', 
+                                link: 'https://drive.google.com/drive/folders/1AcVPbLVnlj8i9TDeWxduWjsD1xQmt9jt?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    }
+                ]
+            },
+            'sas': {
+                title: 'SAS',
+                icon: 'fas fa-globe-americas',
+                color: 'teal',
+                drive: 'https://drive.google.com/drive/folders/1uqaEhAl4gFvWTZF_w69VVLcyFnF_KsWK?usp=drive_link',
+                resources: [
+                    {
+                        type: 'Notas español',
+                        items: [
+                            { 
+                                name: 'Notas español', 
+                                link: 'https://drive.google.com/drive/folders/1YzyZYwkTNovffOQ9jyIX0OJgaae0usx2?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'IA SAMPLES',
+                        items: [
+                            { 
+                                name: 'IA SAMPLES', 
+                                link: 'https://drive.google.com/drive/folders/1EtyzOroCDRfk3aFbRUVpdpEieS2wY6Qd?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Sitios web',
+                        items: [
+                            { 
+                                name: 'Mr Kremer Science', 
+                                link: 'https://mrkremerscience.com/ess/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'CLIMEX Handbook', 
+                                link: 'https://climexhandbook.w.uib.no/handbook/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'WIS - ESS', 
+                                link: 'https://sites.google.com/a/wis.edu.hk/ess/home',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Mr G Science', 
+                                link: 'https://www.mrgscience.com/ibdp-environmental-systems-and-societies.html',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Recursos adicionales',
+                        items: [
+                            { 
+                                name: 'Recursos adicionales 1', 
+                                link: 'https://drive.google.com/drive/folders/0B9WgJ2fMKfV6flFWQUZxckQxRTRuLU45eHNwN1hNOVpfVk9vVmJGaUN1WUxrZWlfcm9eldlk?resourcekey=0-VpLsD5Xk3mmFiY__LqZRgA',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Recursos adicionales 2', 
+                                link: 'https://drive.google.com/drive/folders/1vws_BwGUA3NNhBlbNabMEgqxSGvUUPRX',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Recursos adicionales 3', 
+                                link: 'https://docs.google.com/document/d/15lcTKefdFAGVEzVBBjCWMpvd1_ol-DTc/edit?rtpof=true&sd=true',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Topic 1',
+                        items: [
+                            { 
+                                name: 'Topic 1', 
+                                link: 'https://docs.google.com/presentation/d/1QcePPpBcH23of6HH-xk6i--MIfpSOS1TEAJafdYKscc/edit',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Quizlet',
+                        items: [
+                            { 
+                                name: 'Quizlet - Albert Enechi', 
+                                link: 'https://quizlet.com/albertenechi/folders/ib-ess/sets',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Environmental Science & Environmental Systems', 
+                                link: 'https://quizlet.com/426175082/environmental-science-environmental-systems-flash-cards/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'ESS Part 2 First Half', 
+                                link: 'https://quizlet.com/454892097/ess-part-2-first-half-flash-cards/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'ESS Part 2 Second Half', 
+                                link: 'https://quizlet.com/455009992/ess-part-2-second-half-flash-cards/',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Recursos de estudio',
+                        items: [
+                            { 
+                                name: 'Case Study Breakdown', 
+                                link: 'https://docs.google.com/document/d/1d6O_Fo25xfTNRsNqS2ekpfJTlkuxF71YY_uTexaiECc/edit',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Human Systems & Resource Use Notes', 
+                                link: 'https://docs.google.com/document/d/1M2iZpI9SjzNizGwQdi7L3TJi5HEe5KQVUwiBNRJ9toM/edit',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Case studies list', 
+                                link: 'https://docs.google.com/document/d/1c5OqyIQ6wugawxHzAxxkUCrr-TAr7AV_stRMWnB-Ov0/edit',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Last minute exam tips', 
+                                link: 'https://docs.google.com/document/d/1tJdg5yL8VjB0Wp6klt2uXDJTBGPsLwiwn58E_9VL9fo/edit',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Temas', 
+                                link: 'https://docs.google.com/document/d/1OFrEmPnPHG0eWCPQHXQ28KQvi27PeSdUcRigEVspqNc/edit?tab=t.0',
+                                favorite: false 
+                            }
+                        ]
+                    }
+                ]
+            },
+            'cdes': {
+                title: 'CDES',
+                icon: 'fas fa-running',
+                color: 'orange',
+                drive: 'https://drive.google.com/drive/folders/1BFU9xvfNTtnVZbGFO5dAp6DUCo46vmyn?usp=drive_link',
+                resources: [
+                    {
+                        type: 'Investigación',
+                        items: [
+                            { 
+                                name: 'Investigación', 
+                                link: 'https://www.docsity.com/es/docs/cdes-investigacion-individual-magdiel-pacosonco/8354363',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Notas español',
+                        items: [
+                            { 
+                                name: 'Notas español', 
+                                link: 'https://docs.google.com/document/d/1UMicyp3WBWxsaMd6pha9AENAVQeYh0dUauD02hfoUm0/edit?tab=t.0',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'NOTAS',
+                        items: [
+                            { 
+                                name: 'NOTAS', 
+                                link: 'https://ibsportsscience.wixsite.com/home',
+                                favorite: false 
+                            }
+                        ]
+                    }
+                ]
+            },
+            'business-management': {
+                title: 'Gestión Empresarial',
+                icon: 'fas fa-briefcase',
+                color: 'gray',
+                drive: 'https://drive.google.com/drive/folders/1Y2xZJJDnGAaqEI407r0s4NsswpXwik98?usp=sharing',
+                resources: [
+                    {
+                        type: 'LINK NOTES',
+                        items: [
+                            { 
+                                name: 'LINK NOTES', 
+                                link: 'https://drive.google.com/drive/folders/1AwT-fDPvRDiOE7rPt-kJE8-OspR4Eysy?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Recursos externos',
+                        items: [
+                            { 
+                                name: 'Lewwinski Resources', 
+                                link: 'https://repo.pirateib.xyz/index.php?p=Lewwinski+Business+Management',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'ibGenius Resources', 
+                                link: 'https://repo.pirateib.xyz/index.php?p=ibGenius',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'All Level7 Case Study Packs', 
+                                link: 'https://repo.pirateib.xyz/index.php?p=IB+BOOKS%2FGroup+3+-+Individuals+and+Societies%2FBusiness+Management%2FLevel7+Education',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Business Made Easy', 
+                                link: 'https://www.businessmadeeasy.xyz/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'IB Made Easy', 
+                                link: 'https://ibmadeasy.wixsite.com/ibmadeeasy/business-management-sl',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'IB Notes', 
+                                link: 'https://ibnotes42teocgiralgo.notion.site/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'OneDrive Resources', 
+                                link: 'https://onedrive.live.com/?authkey=%21APyplBpjQ1b6bxM&id=DE8E8A460EF4E2F3%21824&cid=DE8E8A460EF4E2F3',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Quizlet',
+                        items: [
+                            { 
+                                name: 'Definitions in alphabetical order', 
+                                link: 'https://quizlet.com/93036208/ib-business-and-management-sl-and-hl-definitions-flash-cards/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Chapter 1 Flashcards', 
+                                link: 'https://quizlet.com/_9wd17t?x=1qqt&i=27huh0',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Chapter 2 Flashcards', 
+                                link: 'https://quizlet.com/gb/473029239/topic-1-business-flashcards/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Chapter 3 Flashcards', 
+                                link: 'https://quizlet.com/580533446/chapter-3-flashcards-key-concepts-flash-cards/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Chapter 4 Flashcards (Part 1)', 
+                                link: 'https://quizlet.com/582437401/chapter-4-business-flashcards-marketing-part-1-flash-cards/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Chapter 4 Flashcards (Part 2)', 
+                                link: 'https://quizlet.com/583043161/chapter-4-business-flashcards-marketing-part-2-flash-cards/?new',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Chapter 5 Flashcards', 
+                                link: 'https://quizlet.com/583639443/chapter-5-business-flashcards/',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Recursos adicionales',
+                        items: [
+                            { 
+                                name: 'How to structure a Business Management Extended Essay', 
+                                link: 'https://www.ibmastery.com/blog/how-to-structure-a-business-management-extended-essay',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Overleaf', 
+                                link: 'https://www.overleaf.com/read/dzzzmwxkvfcd',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Business Management Notes', 
+                                link: 'https://docs.google.com/document/d/1EUW9Tm9sgjPWnHOEhGkGZEizVSHdcfQQB9Cu-_t3Er4/edit',
+                                favorite: false 
+                            },
+                            { 
+                                name: '1.6 Growth and Evolution Notes', 
+                                link: 'https://drive.google.com/file/d/1ZgxwdiNUyVvyo-MRtT-znKSVpVCTfQTm/view',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Unit 1 Notes', 
+                                link: 'https://docs.google.com/document/d/1XHfCMZqkH_OWRB8hFvuEqCbyKxhRlu_oZz0IoGlbbQI/edit',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Unit 2 Notes', 
+                                link: 'https://docs.google.com/document/d/1aROqYBBMCg1JveoFcmv-CHcehLDGDe7FdLVmpFAuTHg/edit',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Unit 3 Notes', 
+                                link: 'https://docs.google.com/document/d/1_JAQx7OsKmAGjO4IZ4jOhnP-RdnEzUF017i3VcCWKa8/edit',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Unit 4 Notes', 
+                                link: 'https://docs.google.com/document/d/1s6FS5cNOfhUKQ3nryZ1zOmqcClXjhCxD4m2C9NEgcP8/edit',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Unit 5 Notes', 
+                                link: 'https://docs.google.com/document/d/1FKu5a5eANWW_1CTOAqzOfvs7l9LXHqzJYqixk2fJQpA/edit',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'CUEGIS',
+                        items: [
+                            { 
+                                name: 'Panmore', 
+                                link: 'http://panmore.com/',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Dachpian - CUEGIS Questions', 
+                                link: 'https://dachpian.weebly.com/cuegis-questions.html',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Casos de estudio', 
+                                link: 'https://drive.google.com/drive/folders/1EN1AUqiQLA7TS2dHj1NNLcr77b5zzb43?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    }
+                ]
+            },
+            'english': {
+                title: 'Inglés',
+                icon: 'fas fa-language',
+                color: 'blue',
+                drive: 'https://drive.google.com/drive/folders/1-2dm-m6eJzHHxmEx50nwMjpXLkWa2eHl?usp=drive_link',
+                resources: [
+                    {
+                        type: 'Recursos',
+                        items: [
+                            { 
+                                name: 'Recursos 1', 
+                                link: 'https://drive.google.com/drive/folders/12ESBuctgphgwghpB9ryOqf1o_rM39Fcg?usp=drive_link',
+                                favorite: false 
+                            },
+                            { 
+                                name: '¿Iniciando?', 
+                                link: 'https://drive.google.com/drive/folders/1VpVpv4L2omIjmLtYUYKisFw7SMMyFw4x?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Preparación para exámenes',
+                        items: [
+                            { 
+                                name: 'Revision Village - English B HL', 
+                                link: 'https://www.revisionvillage.com/ib-english-b/hl',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'NOTES',
+                        items: [
+                            { 
+                                name: 'NOTES', 
+                                link: 'https://drive.google.com/drive/folders/1eLiPHW4xDq43G4qGY1Fjl38ZshieWPTP?usp=drive_link',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Ayuda',
+                        items: [
+                            { 
+                                name: 'Lingualia', 
+                                link: 'https://www.lingualia.com/es',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Voila Cambridge', 
+                                link: 'https://voila.cambridgeone.org/mosaic/skill/listening/home',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Cambridge English - What a great idea', 
+                                link: 'https://www.cambridgeenglish.org/learning-english/activities-for-learners/b1g057-what-a-great-idea',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Online PubHTML5', 
+                                link: 'https://online.pubhtml5.com/rohc/tapd/#p=2',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'ESL Lounge', 
+                                link: 'https://www.esl-lounge.com/student/first-certificate.php',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Test English - Inversion', 
+                                link: 'https://test-english.com/grammar-points/b2/inversion-negative-adverbials',
+                                favorite: false 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'Canales recomendados',
+                        items: [
+                            { 
+                                name: 'Pacho8aIF', 
+                                link: 'http://www.youtube.com/@Pacho8aIF',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'Inglés para Perezosos', 
+                                link: 'http://www.youtube.com/@inglesparaperezosos',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'POC English', 
+                                link: 'http://www.youtube.com/@POCEnglish',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'En Simples Palabras', 
+                                link: 'http://www.youtube.com/@EnSimplesPalabras',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'BBC News', 
+                                link: 'http://www.youtube.com/@BBCNews',
+                                favorite: false 
+                            },
+                            { 
+                                name: 'The English Spotlight', 
+                                link: 'http://www.youtube.com/@theenglishspotlight3886',
+                                favorite: false 
+                            }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // Función para inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navegación entre secciones
+            const navBtns = document.querySelectorAll('.nav-btn');
+            const sections = document.querySelectorAll('.content-section');
+            
+            navBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetSection = btn.getAttribute('data-section');
+                    
+                    // Ocultar todas las secciones
+                    sections.forEach(section => {
+                        section.classList.add('hidden');
+                    });
+                    
+                    // Mostrar la sección seleccionada
+                    document.getElementById(`${targetSection}-section`).classList.remove('hidden');
+                    document.getElementById(`${targetSection}-section`).classList.add('fade-in');
+                    
+                    // Actualizar el botón activo
+                    navBtns.forEach(b => b.classList.remove('bg-red-800'));
+                    btn.classList.add('bg-red-800');
+                });
+            });
+            
+            // Filtros de cursos
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const courseCards = document.querySelectorAll('.course-card');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const filter = btn.getAttribute('data-filter');
+                    
+                    // Actualizar botón activo
+                    filterBtns.forEach(b => {
+                        b.classList.remove('bg-red-100', 'text-red-800');
+                        b.classList.add('bg-gray-100', 'text-gray-800');
+                    });
+                    btn.classList.remove('bg-gray-100', 'text-gray-800');
+                    btn.classList.add('bg-red-100', 'text-red-800');
+                    
+                    // Filtrar cursos
+                    courseCards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Filtros de recursos
+            const resourceFilterBtns = document.querySelectorAll('.resource-filter-btn');
+            const resourceCards = document.querySelectorAll('.resource-card');
+            
+            resourceFilterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const filter = btn.getAttribute('data-filter');
+                    
+                    // Actualizar botón activo
+                    resourceFilterBtns.forEach(b => {
+                        b.classList.remove('bg-red-100', 'text-red-800');
+                        b.classList.add('bg-gray-100', 'text-gray-800');
+                    });
+                    btn.classList.remove('bg-gray-100', 'text-gray-800');
+                    btn.classList.add('bg-red-100', 'text-red-800');
+                    
+                    // Filtrar recursos
+                    resourceCards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-type') === filter) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Modal de recursos detallados del curso
+            const modal = document.getElementById('course-resources-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const viewResourcesBtns = document.querySelectorAll('.view-resources-btn');
+            const modalCourseTitle = document.getElementById('modal-course-title');
+            const modalCourseContent = document.getElementById('modal-course-content');
+            
+            viewResourcesBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const courseId = btn.getAttribute('data-course');
+                    const courseData = courseResources[courseId];
+                    
+                    if (courseData) {
+                        // Configurar título del modal
+                        modalCourseTitle.textContent = courseData.title;
+                        
+                        // Limpiar contenido anterior
+                        modalCourseContent.innerHTML = '';
+                        
+                        // Agregar enlace a Google Drive si existe
+                        if (courseData.drive) {
+                            const driveSection = document.createElement('div');
+                            driveSection.className = 'mb-6 p-4 bg-red-50 rounded-lg';
+                            driveSection.innerHTML = `
+                                <h4 class="text-lg font-semibold mb-2 text-red-800">
+                                    <i class="fab fa-google-drive mr-2"></i>Google Drive del Curso
+                                </h4>
+                                <a href="${courseData.drive}" target="_blank" class="text-red-600 hover:text-red-800">
+                                    Acceder a la carpeta de Google Drive <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            `;
+                            modalCourseContent.appendChild(driveSection);
+                        }
+                        
+                        // Agregar recursos del curso
+                        courseData.resources.forEach(resourceGroup => {
+                            const resourceGroupHtml = `
+                                <div>
+                                    <h4 class="text-xl font-semibold mb-3 text-${courseData.color}-700">${resourceGroup.type}</h4>
+                                    <ul class="space-y-2">
+                                        ${resourceGroup.items.map(item => `
+                                            <li class="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                                                <div>
+                                                    <h5 class="font-medium">${item.name}</h5>
+                                                </div>
+                                                <div class="flex space-x-2">
+                                                    <a href="${item.link}" target="_blank" class="text-${courseData.color}-600 hover:text-${courseData.color}-800">
+                                                        <i class="fas fa-external-link-alt"></i>
+                                                    </a>
+                                                    <button class="favorite-btn text-gray-400 hover:text-red-500" data-id="${courseId}-${item.name}">
+                                                        <i class="far fa-star"></i>
+                                                    </button>
+                                                </div>
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                            `;
+                            
+                            modalCourseContent.innerHTML += resourceGroupHtml;
+                        });
+                        
+                        // Mostrar modal
+                        modal.classList.remove('hidden');
+                        
+                        // Inicializar botones de favoritos en el modal
+                        initFavoriteButtons();
+                    }
+                });
+            });
+            
+            closeModalBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+            
+            // Cerrar modal al hacer clic fuera del contenido
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+            
+            // Sistema de favoritos
+            function initFavoriteButtons() {
+                const favoriteBtns = document.querySelectorAll('.favorite-btn');
+                
+                favoriteBtns.forEach(btn => {
+                    const resourceId = btn.getAttribute('data-id');
+                    
+                    // Verificar si el recurso ya está en favoritos
+                    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+                    if (favorites.includes(resourceId)) {
+                        btn.classList.add('active');
+                        btn.innerHTML = '<i class="fas fa-star"></i>';
+                    }
+                    
+                    btn.addEventListener('click', () => {
+                        const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+                        
+                        if (btn.classList.contains('active')) {
+                            // Quitar de favoritos
+                            btn.classList.remove('active');
+                            btn.innerHTML = '<i class="far fa-star"></i>';
+                            
+                            const index = favorites.indexOf(resourceId);
+                            if (index > -1) {
+                                favorites.splice(index, 1);
+                            }
+                        } else {
+                            // Agregar a favoritos
+                            btn.classList.add('active');
+                            btn.innerHTML = '<i class="fas fa-star"></i>';
+                            favorites.push(resourceId);
+                        }
+                        
+                        localStorage.setItem('favorites', JSON.stringify(favorites));
+                    });
+                });
+            }
+            
+            // Inicializar botones de favoritos
+            initFavoriteButtons();
+            
+            // Cargar favoritos en la sección correspondiente
+            function loadFavorites() {
+                const favoritesContainer = document.getElementById('favorites-container');
+                const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+                
+                if (favorites.length === 0) {
+                    favoritesContainer.innerHTML = `
+                        <div class="bg-gray-100 rounded-lg shadow-md p-8 text-center text-gray-500 col-span-full">
+                            No tienes recursos favoritos guardados aún
+                        </div>
+                    `;
+                    return;
+                }
+                
+                favoritesContainer.innerHTML = '';
+                
+                // Buscar información de cada favorito
+                favorites.forEach(resourceId => {
+                    let resourceInfo = null;
+                    
+                    // Buscar en los recursos de cursos
+                    for (const courseId in courseResources) {
+                        const course = courseResources[courseId];
+                        for (const resourceGroup of course.resources) {
+                            for (const item of resourceGroup.items) {
+                                if (`${courseId}-${item.name}` === resourceId) {
+                                    resourceInfo = {
+                                        name: item.name,
+                                        type: resourceGroup.type,
+                                        course: course.title,
+                                        link: item.link,
+                                        color: course.color
+                                    };
+                                    break;
+                                }
+                            }
+                            if (resourceInfo) break;
+                        }
+                        if (resourceInfo) break;
+                    }
+                    
+                    // Buscar en los recursos de la biblioteca
+                    if (!resourceInfo) {
+                        const resourceCards = document.querySelectorAll('.resource-card');
+                        resourceCards.forEach(card => {
+                            if (card.querySelector('.favorite-btn')?.getAttribute('data-id') === resourceId) {
+                                const title = card.querySelector('h3').textContent;
+                                const description = card.querySelector('p').textContent;
+                                const link = card.querySelector('a').getAttribute('href');
+                                
+                                resourceInfo = {
+                                    name: title,
+                                    type: 'Recurso de biblioteca',
+                                    course: description,
+                                    link: link,
+                                    color: 'gray'
+                                };
+                            }
+                        });
+                    }
+                    
+                    // Si se encontró el recurso, agregarlo al contenedor
+                    if (resourceInfo) {
+                        const favoriteCard = document.createElement('div');
+                        favoriteCard.className = 'bg-white rounded-lg shadow-md overflow-hidden border border-gray-200';
+                        favoriteCard.innerHTML = `
+                            <div class="bg-${resourceInfo.color}-100 p-4">
+                                <h3 class="text-xl font-bold text-${resourceInfo.color}-800">${resourceInfo.name}</h3>
+                                <p class="text-sm text-${resourceInfo.color}-600">${resourceInfo.type} - ${resourceInfo.course}</p>
+                            </div>
+                            <div class="p-4">
+                                <div class="flex justify-between items-center">
+                                    <a href="${resourceInfo.link}" class="text-${resourceInfo.color}-600 hover:text-${resourceInfo.color}-800">
+                                        Ver recurso <i class="fas fa-arrow-right ml-1"></i>
+                                    </a>
+                                    <button class="favorite-btn active text-red-500" data-id="${resourceId}">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        
+                        favoritesContainer.appendChild(favoriteCard);
+                    }
+                });
+                
+                // Inicializar botones de favoritos en la sección de favoritos
+                initFavoriteButtons();
+            }
+            
+            // Cargar favoritos cuando se visita la sección
+            document.querySelector('[data-section="favorites"]').addEventListener('click', loadFavorites);
+            
+            // Botón flotante para agregar enlaces
+            const fab = document.getElementById('fab');
+            const formContainer = document.getElementById('form-container');
+            const cancelFormBtn = document.getElementById('cancel-form-btn');
+            
+            fab.addEventListener('click', () => {
+                formContainer.classList.toggle('active');
+            });
+            
+            cancelFormBtn.addEventListener('click', () => {
+                formContainer.classList.remove('active');
+                document.getElementById('add-link-form').reset();
+            });
+            
+            // Agregar nuevos enlaces
+            const addLinkForm = document.getElementById('add-link-form');
+            const userLinksContainer = document.getElementById('user-links-container');
+            const notification = document.getElementById('notification');
+            
+            // Cargar enlaces guardados
+            function loadUserLinks() {
+                const userLinks = JSON.parse(localStorage.getItem('userLinks') || '[]');
+                
+                if (userLinks.length === 0) {
+                    userLinksContainer.innerHTML = `
+                        <div class="bg-gray-100 rounded-lg shadow-md p-4 text-center text-gray-500">
+                            No hay enlaces agregados aún
+                        </div>
+                    `;
+                    return;
+                }
+                
+                userLinksContainer.innerHTML = '';
+                
+                userLinks.forEach((link, index) => {
+                    const categoryColors = {
+                        'academic': 'red',
+                        'research': 'gray',
+                        'tools': 'gray',
+                        'dictionaries': 'gray',
+                        'other': 'gray'
+                    };
+                    
+                    const color = categoryColors[link.category] || 'gray';
+                    const categoryIcons = {
+                        'academic': 'fa-university',
+                        'research': 'fa-search',
+                        'tools': 'fa-tools',
+                        'dictionaries': 'fa-book',
+                        'other': 'fa-link'
+                    };
+                    
+                    const icon = categoryIcons[link.category] || 'fa-link';
+                    
+                    const linkCard = document.createElement('div');
+                    linkCard.className = 'bg-white rounded-lg shadow-md p-4 flex items-start border border-gray-200';
+                    linkCard.innerHTML = `
+                        <i class="fas ${icon} text-${color}-500 text-2xl mr-4 mt-1"></i>
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <h4 class="font-bold">${link.title}</h4>
+                                <button class="delete-link-btn text-red-500 hover:text-red-700" data-index="${index}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2">${link.description || 'Sin descripción'}</p>
+                            <a href="${link.url}" target="_blank" class="text-${color}-600 hover:text-${color}-800 text-sm">
+                                Visitar sitio <i class="fas fa-external-link-alt ml-1"></i>
+                            </a>
+                        </div>
+                    `;
+                    
+                    userLinksContainer.appendChild(linkCard);
+                });
+                
+                // Agregar event listeners a los botones de eliminar
+                document.querySelectorAll('.delete-link-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.getAttribute('data-index'));
+                        const userLinks = JSON.parse(localStorage.getItem('userLinks') || '[]');
+                        userLinks.splice(index, 1);
+                        localStorage.setItem('userLinks', JSON.stringify(userLinks));
+                        loadUserLinks();
+                        showNotification('Enlace eliminado correctamente');
+                    });
+                });
+            }
+            
+            // Cargar enlaces al inicio
+            loadUserLinks();
+            
+            addLinkForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const title = document.getElementById('link-title').value;
+                const url = document.getElementById('link-url').value;
+                const category = document.getElementById('link-category').value;
+                const description = document.getElementById('link-description').value;
+                
+                const userLinks = JSON.parse(localStorage.getItem('userLinks') || '[]');
+                userLinks.push({ title, url, category, description });
+                localStorage.setItem('userLinks', JSON.stringify(userLinks));
+                
+                // Limpiar formulario y cerrar
+                addLinkForm.reset();
+                formContainer.classList.remove('active');
+                
+                // Recargar enlaces
+                loadUserLinks();
+                
+                // Mostrar notificación
+                showNotification('Enlace agregado correctamente');
+            });
+            
+            // Función para mostrar notificaciones
+            function showNotification(message) {
+                notification.textContent = message;
+                notification.style.display = 'block';
+                
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }
+            
+            // Funcionalidad de búsqueda
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            
+            function performSearch() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                
+                if (!searchTerm) {
+                    return;
+                }
+                
+                // Mostrar todos los elementos que coincidan con la búsqueda
+                const allCards = document.querySelectorAll('.course-card, .resource-card');
+                const allLinks = document.querySelectorAll('#links-section .bg-white');
+                
+                // Ocultar todas las secciones primero
+                sections.forEach(section => {
+                    section.classList.add('hidden');
+                });
+                
+                // Crear una sección de resultados de búsqueda
+                let searchResultsSection = document.getElementById('search-results-section');
+                
+                if (!searchResultsSection) {
+                    searchResultsSection = document.createElement('section');
+                    searchResultsSection.id = 'search-results-section';
+                    searchResultsSection.className = 'content-section fade-in';
+                    document.querySelector('main').appendChild(searchResultsSection);
+                }
+                
+                searchResultsSection.innerHTML = `
+                    <h2 class="text-3xl font-bold mb-6 text-red-700">Resultados de búsqueda para "${searchTerm}"</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="search-results-container">
+                        <!-- Los resultados aparecerán aquí -->
+                    </div>
+                `;
+                
+                const searchResultsContainer = document.getElementById('search-results-container');
+                searchResultsContainer.innerHTML = '';
+                
+                let hasResults = false;
+                
+                // Buscar en cursos
+                allCards.forEach(card => {
+                    const title = card.querySelector('h3').textContent.toLowerCase();
+                    const description = card.querySelector('p').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                        const clonedCard = card.cloneNode(true);
+                        searchResultsContainer.appendChild(clonedCard);
+                        hasResults = true;
+                    }
+                });
+                
+                // Buscar en enlaces
+                allLinks.forEach(link => {
+                    const title = link.querySelector('h4').textContent.toLowerCase();
+                    const description = link.querySelector('p').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                        const clonedLink = link.cloneNode(true);
+                        searchResultsContainer.appendChild(clonedLink);
+                        hasResults = true;
+                    }
+                });
+                
+                // Mostrar la sección de resultados
+                searchResultsSection.classList.remove('hidden');
+                
+                // Actualizar el botón de navegación activo
+                navBtns.forEach(b => b.classList.remove('bg-red-800'));
+                
+                // Mostrar mensaje si no hay resultados
+                if (!hasResults) {
+                    searchResultsContainer.innerHTML = `
+                        <div class="bg-gray-100 rounded-lg shadow-md p-8 text-center text-gray-500 col-span-full">
+                            No se encontraron resultados para "${searchTerm}"
+                        </div>
+                    `;
+                }
+                
+                // Inicializar botones de favoritos en los resultados
+                initFavoriteButtons();
+            }
+            
+            searchBtn.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
